@@ -23,4 +23,4 @@ def count_logs_levels(text):
     
 file="E:/Learning Devops 2026/Python For Devops/day-02/app.log"
 text=read_log_file(file)
-count_logs_levels(text)  
+count_logs_levels(text)
