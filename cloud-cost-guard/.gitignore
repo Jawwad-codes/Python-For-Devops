@@ -1,0 +1,73 @@
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# Environment Variables
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local SQLite
+*.db
+*.sqlite3
+
+# AWS CLI
+.aws-sam/
+
+# Terraform (if you add Terraform later)
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!.tfvars.example
+
+# Docker
+docker-compose.override.yml
+
+# Secrets
+*.pem
+*.key
+*.crt
+*.p12
+
+# Coverage
+.coverage.*
