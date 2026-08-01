@@ -2,8 +2,8 @@
 from app.analyzers.ec2 import EC2Analyzer 
 from app.analyzers.ebs import EBSAnalyzer
 from app.analyzers.snapshots import SnapshotAnalyzer
+from app.analyzers.eip import ElasticIPAnalyzer
 from fastapi import APIRouter
-
 router = APIRouter()
 
 @router.get("/scan/ec2")
@@ -19,4 +19,9 @@ def scan_ebs():
 @router.get("/scan/snapshots")
 def scan_snapshots():
     analyzer=SnapshotAnalyzer()
+    return analyzer.scan()
+
+@router.get("/scan/eip")
+def scan_eip():
+    analyzer=ElasticIPAnalyzer()
     return analyzer.scan()
