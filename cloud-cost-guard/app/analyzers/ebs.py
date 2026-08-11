@@ -1,6 +1,7 @@
 from app.aws.clients import aws
 from app.config import settings
 from app.models.recommendation import Recommendation
+from app.models.recommendation import ScanResult
 
 
 EBS_STORAGE_COST_PER_GB = 0.08
@@ -8,8 +9,12 @@ EBS_STORAGE_COST_PER_GB = 0.08
 
 class EBSAnalyzer:
 
-    def scan(self) -> list[Recommendation]:
+    def __init__(self):
+        self.cost_service = CostService()
+
+    def scan(self):
         findings = []
+        actual_cost = self.cost_service.get_service_cost("Amazon Elastic Block Store")
 
         volumes = self._list_volumes()
 
@@ -17,7 +22,11 @@ class EBSAnalyzer:
 
             findings.extend(self._analyze_volume(volume))
 
-        return findings
+        return ScanResult(
+            service="EBS",
+            actual_monthly_cost_usd=actual_cost,  # Placeholder, replace with actual cost if available
+            findings=findings
+        )
 
     def _list_volumes(self):
         response = aws.ec2.describe_volumes()
@@ -50,6 +59,7 @@ class EBSAnalyzer:
                     issue="Unattached EBS Volume",
                     recommendation="Delete this volume if it is no longer required.",
                     estimated_monthly_saving_usd=monthly_cost,
+                    actual_cost_usd=actual_cost,
                     region=settings.aws_region,
                     status=state,
                 )
@@ -82,6 +92,7 @@ class EBSAnalyzer:
                         issue="Volume attached to stopped EC2 instance",
                         recommendation="Review whether the stopped instance and its volume are still required.",
                         estimated_monthly_saving_usd=monthly_cost,
+                        actual_cost_usd=actual_cost,
                         region=settings.aws_region,
                         status=state,
                     )
@@ -104,6 +115,7 @@ class EBSAnalyzer:
                     issue="gp2 volume detected",
                     recommendation="Consider migrating this volume to gp3 for better price-performance.",
                     estimated_monthly_saving_usd=round(monthly_cost * 0.20, 2),
+                    aws_cost_usd=actual_cost,
                     region=settings.aws_region,
                     status=state,
                 )

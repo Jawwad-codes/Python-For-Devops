@@ -3,12 +3,17 @@ from datetime import datetime, timedelta, timezone
 from app.aws.clients import aws
 from app.config import INSTANCE_MONTHLY_COST
 from app.models.recommendation import Recommendation
+from app.services.cost_service import CostService
+from app.models.recommendation import ScanResult
 
 
 
 class EC2Analyzer:
+    def __init__(self):
+        self.cost_service = CostService()
     def scan(self):
         findings = []
+        actual_cost = self.cost_service.get_service_cost("Amazon Elastic Compute Cloud - Compute")
 
         response = aws.ec2.describe_instances()
 
@@ -39,7 +44,11 @@ class EC2Analyzer:
                     )
                 )
 
-        return findings
+        return ScanResult(
+            service="EC2",
+            actual_monthly_cost_usd=actual_cost,
+            findings=findings
+        )
 
     def _get_instance_name(self, tags):
         for tag in tags:
@@ -84,7 +93,8 @@ class EC2Analyzer:
         availability_zone,
         launch_time,
         avg_cpu,
-        status
+        status,
+        actual_cost
     ):
 
         if avg_cpu < 5:
@@ -109,6 +119,7 @@ class EC2Analyzer:
             issue=issue,
             recommendation=recommendation,
             estimated_monthly_saving_usd=INSTANCE_MONTHLY_COST.get(instance_type, 0),
-            region=availability_zone[:-1],   # ap-south-1a -> ap-south-1
+            actual_cost_usd=actual_cost,
+            region=availability_zone[:-1],
             status=status,
 )    

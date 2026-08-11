@@ -9,5 +9,6 @@ class AWSClient:
         self.logs = boto3.client("logs", region_name=settings.aws_region)
         self.ecr = boto3.client("ecr", region_name=settings.aws_region)
         self.cloudwatch=boto3.client("cloudwatch", region_name=settings.aws_region)
+        self.ce = boto3.client("ce",region_name="us-east-1")
  
 aws= AWSClient()        

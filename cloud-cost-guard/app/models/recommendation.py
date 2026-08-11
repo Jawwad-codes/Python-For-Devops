@@ -19,3 +19,10 @@ class Recommendation(BaseModel):
     region: str
 
     status: str
+    actual_monthly_cost_usd: float
+
+
+class ScanResult(BaseModel):
+    service: str
+    actual_cost_usd: float
+    findings: list[Recommendation]
